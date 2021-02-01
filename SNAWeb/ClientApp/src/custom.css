@@ -1,0 +1,25 @@
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+code {
+  color: #E01A76;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+
+
+h1 {
+    font-size: 2.0rem;
+    margin-top: 1.5rem;
+}
