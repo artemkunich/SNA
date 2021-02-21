@@ -11,16 +11,16 @@ namespace SNAServices.Datasets
     public class DatasetsService : IDatasetsService
     {
         readonly SNADbContext dbContext;
+        readonly IDatasetParser parser;
 
-        public DatasetsService(SNADbContext dbContext) {
+        public DatasetsService(SNADbContext dbContext, IDatasetParser parser) {
             this.dbContext = dbContext;
+            this.parser = parser;
         }
 
         public async Task<int> CreateNewDataset(DatasetInput datasetInput)
-        {
-            var parser = new DatasetParser(datasetInput.Data);
-            
-            List<Link> links = parser.Parse();
+        {            
+            List<Link> links = parser.Parse(datasetInput);
 
             links = OrderLinksAndRemoveDublicates(links);
 

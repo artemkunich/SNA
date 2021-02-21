@@ -17,21 +17,13 @@ namespace SNAServices.Datasets
         }
     }
 
-    public class DatasetParser
+    public class DatasetStringParser: IDatasetParser
     {
         string input;
         int inputLength = -1;
 
         int position;
         int tokenValue;
-
-        public DatasetParser(string input) {
-            this.input = input;
-            this.inputLength = input.Length;
-            this.position = 0;
-            this.tokenValue = -1;
-            
-        }
 
         private TokenType GetNextToken() {
             while (true)
@@ -74,10 +66,21 @@ namespace SNAServices.Datasets
             }
         }
 
-        public List<Link> Parse() {
+        public void SetInput(string input)
+        {
+            this.input = input;
+            this.inputLength = input.Length;
+            this.position = 0;
+            this.tokenValue = -1;
+
+        }
+
+        public List<Link> Parse(DatasetInput input) {
 
             TokenType token;
             List<Link> result = new List<Link>();
+
+            SetInput(input.Data);
 
             while (true)
             {
@@ -107,7 +110,7 @@ namespace SNAServices.Datasets
             }
 
             if(result.Count < 1)
-                throw new DatasetParserException("Dataset must contain at least one records");
+                throw new DatasetParserException("Dataset must contain at least one record");
             return result;
         }
     }

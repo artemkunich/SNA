@@ -18,18 +18,21 @@ namespace SNATests
             services = new ServiceCollection();
             services.AddDbContext<SNADbContext>(options => options.UseInMemoryDatabase("InMemoryDbForTesting").UseInternalServiceProvider(serviceProvider));
             services.AddTransient<IDatasetsService, DatasetsService>();
+            services.AddTransient<IDatasetParser, DatasetStringParser>();
+
             serviceProvider = services.AddEntityFrameworkInMemoryDatabase().BuildServiceProvider();
 
             dbContext = serviceProvider.GetRequiredService<SNADbContext>();
             datasetService = serviceProvider.GetRequiredService<IDatasetsService>();
-            
+            parser = serviceProvider.GetRequiredService<IDatasetParser>();
+
         }
 
         private SNADbContext dbContext;
         private IDatasetsService datasetService;
         private IServiceProvider serviceProvider;
         private IServiceCollection services;
-
+        private IDatasetParser parser;
 
 
         [Fact]
@@ -92,10 +95,9 @@ namespace SNATests
         [InlineData("3 2 4")]
         public void TestDatasetParserWithInvalidData(string value)
         {
-            var parser = new DatasetParser(value);
             Assert.Throws<DatasetParserException>(() =>
             {
-                parser.Parse();
+                parser.Parse(new DatasetInput() { Data = value });
             });
         }
 
@@ -104,11 +106,10 @@ namespace SNATests
         [InlineData("16\t91\n 1750 4923", 16, 91, 1750, 4923)]
         public void TestDatasetParserWithValidData(string value, int input1, int input2, int input3, int input4)
         {
-            var parser = new DatasetParser(value);
             List<Link> result;
             try
             {
-                result = parser.Parse();
+                result = parser.Parse(new DatasetInput() { Data = value });
             }
             catch (Exception ex)
             {
@@ -136,7 +137,6 @@ namespace SNATests
                 Data = datasetData
             };
 
-            var parser = new DatasetParser(datasetData);
 
             CreateTestDataset(datasetInput);
             var datasets = dbContext.Datasets.Where(d => d.Name == datasetName).ToList();
@@ -148,7 +148,7 @@ namespace SNATests
             Assert.Equal(datasetDescription, dataset.Description);
 
             //Links
-            var expectedLinks = datasetService.OrderLinksAndRemoveDublicates(parser.Parse());
+            var expectedLinks = datasetService.OrderLinksAndRemoveDublicates(parser.Parse(new DatasetInput() { Data = datasetData }));
             var actualLinks = dbContext.Links.Where(l => l.DatasetId == dataset.Id).ToList();
 
             Assert.Equal(expectedLinks.Count, dataset.LinksCount);

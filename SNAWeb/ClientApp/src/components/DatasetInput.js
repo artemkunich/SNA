@@ -14,7 +14,7 @@ export default function DatasetInput(props) {
     const [values, setValues] = useState(initialFieldValue);
     const [spinner, setSpinner] = useState(false);
 
-    const handleFileChange = e => {
+    /*const handleFileChange = e => {
         if (e.target.files && e.target.files[0]) {
             let datasetFile = e.target.files[0];
             const reader = new FileReader();
@@ -26,6 +26,16 @@ export default function DatasetInput(props) {
                 })
             }
             reader.readAsText(datasetFile)
+        }
+    }*/
+
+    const handleFileChange = e => {
+        if (e.target.files && e.target.files[0]) {
+            const datasetFile = e.target.files[0];
+            setValues({
+                ...values,
+                data: datasetFile,
+            })
         }
     }
 
@@ -50,7 +60,7 @@ export default function DatasetInput(props) {
         return true;
     }
 
-    const handleUpload =  (e) => {
+    /*const handleUpload =  (e) => {
         if (!validate()) { return; }
         setSpinner(true);
         const request = {
@@ -64,6 +74,27 @@ export default function DatasetInput(props) {
                 name: '',
                 description: '',
                 data: '',
+                fileKey: values.fileKey + 1
+            });
+            setSpinner(false);
+            props.onUpload();
+        });
+    }*/
+
+    const handleUpload = (e) => {
+        if (!validate()) { return; }
+        setSpinner(true);
+        const formData = new FormData();
+        formData.append('name', values.name);
+        formData.append('description', values.description);
+        formData.append('file', values.data);
+
+        addDataset(formData, () => {
+            setValues({
+                ...values,
+                name: '',
+                description: '',
+                data: null,
                 fileKey: values.fileKey + 1
             });
             setSpinner(false);
@@ -86,7 +117,7 @@ export default function DatasetInput(props) {
         )
     }
 
-    const datasetAPI = (url = '/Datasets') => {
+    const datasetAPI = (url = '/Datasets/File') => {
         return {
             create: newRecord => axios.post(url, newRecord),
             update: (id, updateRecord) => axios.put(url + id, updateRecord),

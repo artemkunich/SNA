@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using SNAEntityFramework;
 using SNAEntityFramework.Entities;
 using SNAServices.Datasets;
+using System.Net.Http;
+using System.IO;
+using System.Text;
 
 namespace SocialNetworkAnalyser.Controllers
 {
@@ -48,6 +51,30 @@ namespace SocialNetworkAnalyser.Controllers
             }
             return StatusCode(201);
         }
+
+        [Route("File")]
+        [HttpPost]
+        public async Task<ActionResult<Dataset>> UploadDataset([FromForm] DatasetInput datasetInput)
+        {
+            try
+            {
+                using (var stream = datasetInput.File.OpenReadStream())
+                {
+                    datasetInput.Data = new StreamReader(stream).ReadToEnd();
+                }
+                int result = await datasetService.CreateNewDataset(datasetInput);
+
+            }
+            catch (DatasetParserException ex)
+            {
+                _logger.LogError(ex, $"{ex.Message}\n{ex.StackTrace}");
+                return BadRequest(new { errorMessage = "Invalid data format. Input file should contain rows with two space separated numbers" });
+            }
+            return StatusCode(201);
+    }
+
+
+
 
         [Route("{id:int}")]
         [HttpDelete]

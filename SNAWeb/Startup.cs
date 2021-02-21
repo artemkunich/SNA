@@ -32,6 +32,8 @@ namespace SNAWeb
 
             services.AddTransient<IDatasetsService, DatasetsService>();
             services.AddTransient<IGraphService, GraphService>();
+            services.AddTransient<IDatasetParser, DatasetStringParser>();
+            
             services.AddCors();
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
