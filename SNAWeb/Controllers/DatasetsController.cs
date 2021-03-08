@@ -4,12 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SNAEntityFramework;
-using SNAEntityFramework.Entities;
-using SNAServices.Datasets;
 using System.Net.Http;
 using System.IO;
-using System.Text;
+using SNAApplication;
+using SNADomain;
+
 
 namespace SocialNetworkAnalyser.Controllers
 {
@@ -19,11 +18,13 @@ namespace SocialNetworkAnalyser.Controllers
     {
         private readonly ILogger<DatasetsController> _logger;
         private readonly IDatasetsService datasetService;
+        private readonly IDatasetParser parser;
 
-        public DatasetsController(ILogger<DatasetsController> logger, IDatasetsService datasetService)
+        public DatasetsController(ILogger<DatasetsController> logger, IDatasetsService datasetService, IDatasetParser parser)
         {
             _logger = logger;
             this.datasetService = datasetService;
+            this.parser = parser;
         }
 
         [HttpGet]
@@ -43,7 +44,7 @@ namespace SocialNetworkAnalyser.Controllers
             {
                 try
                 {
-                    int result = await datasetService.CreateNewDataset(datasetInput);
+                    int result = await datasetService.CreateNewDataset(datasetInput.Name, datasetInput.Description, parser.Parse(datasetInput));
                 } catch (DatasetParserException ex) {
                     _logger.LogError(ex, $"{ex.Message}\n{ex.StackTrace}");
                     return BadRequest(new { errorMessage = "Invalid data format. Input file should contain rows with two space separated numbers" });
@@ -62,7 +63,7 @@ namespace SocialNetworkAnalyser.Controllers
                 {
                     datasetInput.Data = new StreamReader(stream).ReadToEnd();
                 }
-                int result = await datasetService.CreateNewDataset(datasetInput);
+                int result = await datasetService.CreateNewDataset(datasetInput.Name, datasetInput.Description, parser.Parse(datasetInput));
 
             }
             catch (DatasetParserException ex)

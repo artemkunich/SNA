@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace SNAServices.Datasets
+namespace SNAApplication
 {
     public class DatasetInput
     {

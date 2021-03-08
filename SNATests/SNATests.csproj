@@ -15,7 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SNAServices\SNAServices.csproj" />
+    <ProjectReference Include="..\SNAApplication\SNAApplication.csproj" />
+    <ProjectReference Include="..\SNADomain\SNADomain.csproj" />
+    <ProjectReference Include="..\SNAEntityFramework\SNAEntityFramework.csproj" />
   </ItemGroup>
 
 </Project>

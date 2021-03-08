@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace SNAEntityFramework.Entities
+namespace SNADomain
 {
-    public class Dataset : DBEntity
+    public class Dataset
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 

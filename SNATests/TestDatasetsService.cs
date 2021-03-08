@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using Xunit;
-using SNAServices.Datasets;
+using SNAApplication;
+using SNADomain;
 using SNAEntityFramework;
-using SNAEntityFramework.Entities;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +19,7 @@ namespace SNATests
             services.AddDbContext<SNADbContext>(options => options.UseInMemoryDatabase("InMemoryDbForTesting").UseInternalServiceProvider(serviceProvider));
             services.AddTransient<IDatasetsService, DatasetsService>();
             services.AddTransient<IDatasetParser, DatasetStringParser>();
+            services.AddTransient<IUnitOfWork, EFUnitOfWork>();
 
             serviceProvider = services.AddEntityFrameworkInMemoryDatabase().BuildServiceProvider();
 
@@ -180,7 +181,7 @@ namespace SNATests
         private void CreateTestDataset(DatasetInput datasetInput) {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
-            datasetService.CreateNewDataset(datasetInput);
+            datasetService.CreateNewDataset(datasetInput.Name, datasetInput.Description, parser.Parse(datasetInput));
         }
     }
 }

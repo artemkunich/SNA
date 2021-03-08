@@ -1,10 +1,9 @@
-﻿using SNAEntityFramework.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
+using SNADomain;
 
-namespace SNAServices.Datasets
+namespace SNAApplication
 {
     enum TokenType { 
         Number,

@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SNAEntityFramework\SNAEntityFramework.csproj" />
+    <ProjectReference Include="..\SNADomain\SNADomain.csproj" />
   </ItemGroup>
 
 </Project>
